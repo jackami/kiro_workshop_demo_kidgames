@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "name": "Test Coverage Analyzer",
+  "description": "Analyzes modified source files to identify new/changed functions, checks test coverage in tests/ directory, generates missing test cases, runs test suite, and provides coverage reports with recommendations",
+  "version": "1",
+  "when": {
+    "type": "fileCreated",
+    "patterns": []
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "A source file has been modified. Please analyze the changes and ensure comprehensive test coverage:\n\n1. **Analyze the modified file** to identify:\n   - New or modified functions and methods\n   - Changed logic or algorithms\n   - Updated class structures or interfaces\n\n2. **Check existing test coverage** in the tests/ directory:\n   - Look for corresponding unit tests in tests/unit/\n   - Check property-based tests in tests/property/\n   - Review integration tests in tests/integration/\n\n3. **Generate missing test cases** if coverage is insufficient:\n   - Unit tests for individual functions/methods following the project's modular architecture\n   - Edge cases and error conditions\n   - Property-based tests using fast-check with 100+ iterations\n   - Integration tests for component interactions\n   - Tests that verify the game's core mechanics (match detection, gravity system, scoring)\n\n4. **Run the existing test suite** to ensure all tests pass after changes\n\n5. **Update test coverage reports** and identify remaining gaps\n\n6. **Provide a comprehensive summary** including:\n   - Testing status for the modified components\n   - Coverage gaps that need attention\n   - Recommendations for maintaining high test coverage\n   - Specific focus on game components, utilities, and core functionality\n\nFollow the project's testing conventions with proper file naming, ES6 modules, and detailed property test comments referencing design requirements."
+  },
+  "workspaceFolderName": "KidGames-20251119",
+  "shortName": "test-coverage-analyzer"
+}
