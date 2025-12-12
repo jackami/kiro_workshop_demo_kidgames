@@ -1,0 +1,38 @@
+{
+  "name": "ghost-match-game",
+  "version": "1.0.0",
+  "description": "小鬼消消乐 - A web-based match-3 puzzle game",
+  "type": "module",
+  "main": "js/main.js",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "serve": "npx serve .",
+    "test": "node --experimental-modules tests/run-tests.js",
+    "test:unit": "node --experimental-modules tests/run-unit-tests.js",
+    "test:property": "node --experimental-modules tests/run-property-tests.js",
+    "test:watch": "nodemon --exec \"npm test\"",
+    "dev": "python -m http.server 8000"
+  },
+  "keywords": [
+    "game",
+    "match-3",
+    "puzzle",
+    "html5",
+    "javascript",
+    "css3"
+  ],
+  "author": "Ghost Match Game Team",
+  "license": "MIT",
+  "devDependencies": {
+    "fast-check": "^3.15.0",
+    "nodemon": "^3.0.2"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "browserslist": [
+    "last 2 versions",
+    "> 1%",
+    "not dead"
+  ]
+}

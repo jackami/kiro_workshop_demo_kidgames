@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小鬼消消乐 - Ghost Match Game</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+    <div class="game-container">
+        <header class="game-header">
+            <h1>小鬼消消乐</h1>
+            <div class="game-info">
+                <div class="score-display">
+                    <span class="label">分数:</span>
+                    <span id="score">0</span>
+                </div>
+                <div class="combo-display">
+                    <span class="label">连击:</span>
+                    <span id="combo">0</span>
+                </div>
+                <div class="timer-display">
+                    <span class="label">时间:</span>
+                    <span id="timer">00:00</span>
+                </div>
+            </div>
+        </header>
+        
+        <main class="game-main">
+            <div class="game-board-container">
+                <div id="game-board" class="game-board">
+                    <!-- 8x8 grid will be generated here -->
+                </div>
+            </div>
+            
+            <div class="game-controls">
+                <button id="pause-btn" class="control-btn">暂停</button>
+                <button id="reset-btn" class="control-btn">重新开始</button>
+                <button id="mute-btn" class="control-btn">静音</button>
+            </div>
+        </main>
+        
+        <div id="game-over-modal" class="modal hidden">
+            <div class="modal-content">
+                <h2>游戏结束</h2>
+                <p>最终分数: <span id="final-score">0</span></p>
+                <button id="restart-btn" class="modal-btn">再来一局</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>

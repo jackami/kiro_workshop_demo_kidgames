@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>游戏调试 - Ghost Match Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .debug-panel {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .debug-panel h2 {
+            margin-top: 0;
+            color: #333;
+        }
+        .status {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            font-family: monospace;
+        }
+        .status.ok {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .status.warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            background: #667eea;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        button:hover {
+            background: #5568d3;
+        }
+        #console-output {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="debug-panel">
+        <h2>🔍 游戏状态诊断</h2>
+        <div id="status-container"></div>
+        <button onclick="runDiagnostics()">重新检查</button>
+        <button onclick="testCellClick()">测试单元格点击</button>
+        <button onclick="clearConsole()">清空日志</button>
+    </div>
+
+    <div class="debug-panel">
+        <h2>📋 控制台日志</h2>
+        <div id="console-output"></div>
+    </div>
+
+    <script type="module">
+        // 捕获所有console.log
+        const consoleOutput = document.getElementById('console-output');
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+
+        function addToConsole(type, ...args) {
+            const timestamp = new Date().toLocaleTimeString();
+            const message = args.map(arg => 
+                typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+            ).join(' ');
+            
+            const color = type === 'error' ? '#ff6b6b' : type === 'warn' ? '#ffd93d' : '#6bcf7f';
+            consoleOutput.innerHTML += `<div style="color: ${color}">[${timestamp}] ${type.toUpperCase()}: ${message}</div>`;
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
+        }
+
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            addToConsole('log', ...args);
+        };
+
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            addToConsole('error', ...args);
+        };
+
+        console.warn = function(...args) {
+            originalWarn.apply(console, args);
+            addToConsole('warn', ...args);
+        };
+
+        window.clearConsole = function() {
+            consoleOutput.innerHTML = '';
+        };
+
+        window.runDiagnostics = async function() {
+            const container = document.getElementById('status-container');
+            container.innerHTML = '<p>正在检查...</p>';
+            
+            const results = [];
+            
+            // 检查游戏实例
+            if (window.ghostMatchGame) {
+                results.push({ status: 'ok', message: '✓ 游戏实例已创建' });
+                
+                const game = window.ghostMatchGame;
+                
+                // 检查初始化状态
+                if (game.isInitialized) {
+                    results.push({ status: 'ok', message: '✓ 游戏已初始化' });
+                } else {
+                    results.push({ status: 'error', message: '✗ 游戏未初始化' });
+                }
+                
+                // 检查组件
+                const components = ['gameBoard', 'gameState', 'gameEngine', 'renderer', 'inputHandler', 'audioManager'];
+                components.forEach(comp => {
+                    if (game[comp]) {
+                        results.push({ status: 'ok', message: `✓ ${comp} 已创建` });
+                    } else {
+                        results.push({ status: 'error', message: `✗ ${comp} 未创建` });
+                    }
+                });
+                
+                // 检查游戏引擎状态
+                if (game.gameEngine) {
+                    results.push({ status: 'ok', message: `✓ 游戏引擎状态: ${game.gameEngine.state}` });
+                }
+                
+                // 检查游戏板
+                if (game.gameBoard && game.gameBoard.grid) {
+                    const stats = game.gameBoard.getStats();
+                    results.push({ status: 'ok', message: `✓ 游戏板: ${stats.filledCells}/${stats.totalCells} 单元格已填充` });
+                }
+                
+                // 检查DOM元素
+                const gameContainer = document.getElementById('game-board');
+                if (gameContainer) {
+                    const cells = gameContainer.querySelectorAll('.game-cell');
+                    results.push({ status: 'ok', message: `✓ DOM: ${cells.length} 个单元格元素` });
+                    
+                    const ghosts = gameContainer.querySelectorAll('.ghost-icon');
+                    results.push({ status: 'ok', message: `✓ DOM: ${ghosts.length} 个小鬼图标` });
+                } else {
+                    results.push({ status: 'error', message: '✗ 游戏板容器未找到' });
+                }
+                
+                // 检查事件监听器
+                if (game.inputHandler) {
+                    results.push({ 
+                        status: game.inputHandler.isEnabled ? 'ok' : 'warning', 
+                        message: game.inputHandler.isEnabled ? '✓ 输入处理器已启用' : '⚠ 输入处理器已禁用' 
+                    });
+                }
+                
+            } else {
+                results.push({ status: 'error', message: '✗ 游戏实例未找到 (window.ghostMatchGame)' });
+            }
+            
+            // 显示结果
+            container.innerHTML = results.map(r => 
+                `<div class="status ${r.status}">${r.message}</div>`
+            ).join('');
+        };
+
+        window.testCellClick = function() {
+            console.log('=== 测试单元格点击 ===');
+            
+            const cell = document.querySelector('.game-cell');
+            if (cell) {
+                console.log('找到单元格，模拟点击...');
+                cell.click();
+                console.log('点击事件已触发');
+            } else {
+                console.error('未找到单元格元素');
+            }
+        };
+
+        // 页面加载后自动运行诊断
+        window.addEventListener('load', () => {
+            setTimeout(runDiagnostics, 1000);
+        });
+    </script>
+
+    <!-- 加载游戏 -->
+    <iframe src="index.html" style="width: 100%; height: 600px; border: 2px solid #ddd; border-radius: 10px; margin-top: 20px;"></iframe>
+</body>
+</html>

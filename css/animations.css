@@ -1,0 +1,241 @@
+/* 动画样式文件 - 交换、消除、下落动画 */
+
+/* 图标交换动画 */
+@keyframes swapAnimation {
+    0% {
+        transform: translate(0, 0) scale(1);
+    }
+    50% {
+        transform: scale(1.2);
+        z-index: 10;
+    }
+    100% {
+        transform: translate(var(--swap-x, 0), var(--swap-y, 0)) scale(1);
+    }
+}
+
+.ghost-icon.swapping {
+    animation: swapAnimation 0.4s ease-in-out;
+    z-index: 5;
+}
+
+/* 匹配消除动画 */
+@keyframes matchElimination {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    25% {
+        transform: scale(1.3);
+        opacity: 0.8;
+    }
+    50% {
+        transform: scale(1.5);
+        opacity: 0.6;
+        filter: brightness(1.5) saturate(1.5);
+    }
+    75% {
+        transform: scale(1.2);
+        opacity: 0.3;
+    }
+    100% {
+        transform: scale(0);
+        opacity: 0;
+    }
+}
+
+.ghost-icon.eliminating {
+    animation: matchElimination 0.6s ease-out forwards;
+}
+
+/* 图标下落动画 */
+@keyframes fallAnimation {
+    0% {
+        transform: translateY(var(--fall-start, 0));
+        opacity: 0.8;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.ghost-icon.falling {
+    animation: fallAnimation 0.5s ease-in forwards;
+}
+
+/* 新图标出现动画 */
+@keyframes appearAnimation {
+    0% {
+        transform: translateY(-100%) scale(0.5);
+        opacity: 0;
+    }
+    50% {
+        opacity: 0.7;
+    }
+    100% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+.ghost-icon.appearing {
+    animation: appearAnimation 0.4s ease-out forwards;
+}
+
+/* 分数增加动画 */
+@keyframes scoreIncrease {
+    0% {
+        transform: scale(1);
+        color: inherit;
+    }
+    50% {
+        transform: scale(1.3);
+        color: #48bb78;
+    }
+    100% {
+        transform: scale(1);
+        color: inherit;
+    }
+}
+
+.score-animation {
+    animation: scoreIncrease 0.5s ease-out;
+}
+
+/* 连击效果动画 */
+@keyframes comboEffect {
+    0% {
+        transform: scale(1);
+        background: inherit;
+    }
+    25% {
+        transform: scale(1.1);
+        background: linear-gradient(135deg, #ffd700, #ffed4e);
+    }
+    50% {
+        transform: scale(1.2);
+        background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+    }
+    75% {
+        transform: scale(1.1);
+        background: linear-gradient(135deg, #a55eea, #8854d0);
+    }
+    100% {
+        transform: scale(1);
+        background: inherit;
+    }
+}
+
+.combo-animation {
+    animation: comboEffect 0.8s ease-in-out;
+}
+
+/* 选择高亮动画 */
+@keyframes selectionPulse {
+    0%, 100% {
+        box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+    }
+    50% {
+        box-shadow: 0 0 25px rgba(255, 215, 0, 1);
+    }
+}
+
+.game-cell.selected {
+    animation: selectionPulse 1s ease-in-out infinite;
+}
+
+/* 无效移动摇摆动画 */
+@keyframes invalidMoveShake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    25% {
+        transform: translateX(-5px);
+    }
+    75% {
+        transform: translateX(5px);
+    }
+}
+
+.ghost-icon.invalid-move {
+    animation: invalidMoveShake 0.3s ease-in-out 2;
+}
+
+/* 游戏结束闪烁动画 */
+@keyframes gameOverBlink {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.3;
+    }
+}
+
+.game-board.game-over {
+    animation: gameOverBlink 1s ease-in-out 3;
+}
+
+/* 按钮点击反馈动画 */
+@keyframes buttonPress {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(0.95);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.control-btn.pressed {
+    animation: buttonPress 0.2s ease-out;
+}
+
+/* 模态框出现动画 */
+@keyframes modalFadeIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.modal:not(.hidden) .modal-content {
+    animation: modalFadeIn 0.3s ease-out;
+}
+
+/* 连锁反应特效 */
+@keyframes chainReaction {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.8);
+    }
+    100% {
+        box-shadow: 0 0 0 20px rgba(255, 215, 0, 0);
+    }
+}
+
+.game-cell.chain-reaction {
+    animation: chainReaction 0.6s ease-out;
+}
+
+/* 性能优化 - 启用硬件加速 */
+.ghost-icon,
+.game-cell,
+.modal-content {
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+    perspective: 1000px;
+}
+
+/* 减少动画期间的重绘 */
+.ghost-icon.swapping,
+.ghost-icon.eliminating,
+.ghost-icon.falling,
+.ghost-icon.appearing {
+    pointer-events: none;
+}

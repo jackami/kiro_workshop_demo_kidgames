@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测试暂停后重新开始</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .status {
+            margin: 10px 0;
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 3px;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <h1>暂停后重新开始测试</h1>
+    
+    <div class="test-section">
+        <h2>测试步骤</h2>
+        <ol>
+            <li>点击"开始游戏"按钮</li>
+            <li>点击"暂停游戏"按钮</li>
+            <li>点击"重新开始"按钮</li>
+            <li>检查游戏状态是否为"playing"而不是"paused"</li>
+        </ol>
+    </div>
+    
+    <div class="test-section">
+        <h2>控制面板</h2>
+        <button onclick="startGame()">开始游戏</button>
+        <button onclick="pauseGame()">暂停游戏</button>
+        <button onclick="resetGame()">重新开始</button>
+        <button onclick="checkState()">检查状态</button>
+    </div>
+    
+    <div class="test-section">
+        <h2>游戏状态</h2>
+        <div id="status" class="status">等待开始...</div>
+    </div>
+    
+    <script type="module">
+        import { GameEngine } from './js/core/GameEngine.js';
+        import { GameBoard } from './js/core/GameBoard.js';
+        import { GameState } from './js/core/GameState.js';
+        import { MatchDetector } from './js/algorithms/MatchDetector.js';
+        import { GravitySystem } from './js/algorithms/GravitySystem.js';
+        
+        // 创建模拟的渲染器和音频管理器
+        const mockRenderer = {
+            renderBoard: () => {},
+            showPauseOverlay: () => console.log('显示暂停覆盖层'),
+            hidePauseOverlay: () => console.log('隐藏暂停覆盖层'),
+            updateScore: () => {},
+            updateCombo: () => {},
+            clearAllHighlights: () => {},
+            highlightCell: () => {}
+        };
+        
+        const mockAudioManager = {
+            pauseAll: () => console.log('暂停所有音效'),
+            resumeAll: () => console.log('恢复所有音效'),
+            playSound: () => {}
+        };
+        
+        // 创建游戏引擎和组件
+        const gameBoard = new GameBoard();
+        const gameState = new GameState();
+        const matchDetector = new MatchDetector();
+        const gravitySystem = new GravitySystem();
+        const gameEngine = new GameEngine();
+        
+        // 初始化游戏引擎
+        gameEngine.initialize({
+            gameBoard,
+            gameState,
+            renderer: mockRenderer,
+            inputHandler: { reset: () => {} },
+            audioManager: mockAudioManager,
+            matchDetector,
+            gravitySystem
+        });
+        
+        // 暴露到全局作用域供按钮调用
+        window.gameEngine = gameEngine;
+        
+        function updateStatus(message, isSuccess = null) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.textContent = message;
+            statusDiv.className = 'status';
+            if (isSuccess === true) statusDiv.classList.add('success');
+            if (isSuccess === false) statusDiv.classList.add('error');
+        }
+        
+        window.startGame = function() {
+            gameEngine.start();
+            updateStatus(`游戏已开始 - 状态: ${gameEngine.state}`, true);
+        };
+        
+        window.pauseGame = function() {
+            gameEngine.pause();
+            updateStatus(`游戏已暂停 - 状态: ${gameEngine.state}`, true);
+        };
+        
+        window.resetGame = function() {
+            const beforeState = gameEngine.state;
+            gameEngine.reset();
+            const afterState = gameEngine.state;
+            
+            const success = afterState === 'playing';
+            updateStatus(
+                `重置完成 - 之前: ${beforeState}, 之后: ${afterState}`,
+                success
+            );
+            
+            if (!success) {
+                console.error('❌ 测试失败：重置后游戏状态应该是 "playing"，但实际是 "' + afterState + '"');
+            } else {
+                console.log('✓ 测试通过：重置后游戏状态正确为 "playing"');
+            }
+        };
+        
+        window.checkState = function() {
+            updateStatus(`当前状态: ${gameEngine.state}`);
+        };
+        
+        updateStatus('测试环境已准备就绪');
+    </script>
+</body>
+</html>

@@ -1,0 +1,233 @@
+/* 主样式文件 - 核心游戏样式、网格布局、小鬼图标 */
+
+/* 全局重置和基础样式 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #333;
+}
+
+/* 游戏容器 */
+.game-container {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    width: 100%;
+}
+
+/* 游戏头部 */
+.game-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.game-header h1 {
+    color: #5a67d8;
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.game-info {
+    display: flex;
+    justify-content: space-around;
+    background: #f7fafc;
+    padding: 10px;
+    border-radius: 10px;
+    border: 2px solid #e2e8f0;
+}
+
+.game-info > div {
+    text-align: center;
+}
+
+.game-info .label {
+    display: block;
+    font-size: 0.9rem;
+    color: #718096;
+    margin-bottom: 5px;
+}
+
+.game-info span:not(.label) {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #2d3748;
+}
+
+/* 游戏主体 */
+.game-main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+/* 游戏板容器 */
+.game-board-container {
+    position: relative;
+    padding: 10px;
+    background: #2d3748;
+    border-radius: 15px;
+    box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* 8x8游戏板网格 */
+.game-board {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+    gap: 2px;
+    width: 400px;
+    height: 400px;
+    background: #1a202c;
+    border-radius: 10px;
+    padding: 5px;
+}
+
+/* 游戏板单元格 */
+.game-cell {
+    background: #4a5568;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.game-cell:hover {
+    background: #718096;
+    transform: scale(1.05);
+}
+
+.game-cell.selected {
+    background: #ffd700;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+    transform: scale(1.1);
+}
+
+/* 小鬼图标样式 */
+.ghost-icon {
+    width: 80%;
+    height: 80%;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    transition: all 0.3s ease;
+}
+
+/* 5种小鬼类型的颜色 */
+.ghost-icon.type-0 { background: linear-gradient(135deg, #ff6b6b, #ee5a52); } /* 红色小鬼 */
+.ghost-icon.type-1 { background: linear-gradient(135deg, #4ecdc4, #44a08d); } /* 蓝色小鬼 */
+.ghost-icon.type-2 { background: linear-gradient(135deg, #45b7d1, #96c93d); } /* 绿色小鬼 */
+.ghost-icon.type-3 { background: linear-gradient(135deg, #f9ca24, #f0932b); } /* 黄色小鬼 */
+.ghost-icon.type-4 { background: linear-gradient(135deg, #a55eea, #8854d0); } /* 紫色小鬼 */
+
+.ghost-icon::before {
+    content: '👻';
+    filter: hue-rotate(var(--hue, 0deg));
+}
+
+/* 游戏控制按钮 */
+.game-controls {
+    display: flex;
+    gap: 15px;
+}
+
+.control-btn {
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    border-radius: 25px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.control-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+}
+
+.control-btn:active {
+    transform: translateY(0);
+}
+
+/* 模态框样式 */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal.hidden {
+    display: none;
+}
+
+.modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    max-width: 400px;
+    width: 90%;
+}
+
+.modal-content h2 {
+    color: #2d3748;
+    margin-bottom: 20px;
+    font-size: 2rem;
+}
+
+.modal-content p {
+    font-size: 1.2rem;
+    margin-bottom: 25px;
+    color: #4a5568;
+}
+
+.modal-btn {
+    padding: 12px 30px;
+    background: linear-gradient(135deg, #48bb78, #38a169);
+    color: white;
+    border: none;
+    border-radius: 25px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.modal-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(72, 187, 120, 0.4);
+}
